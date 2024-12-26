@@ -14,7 +14,7 @@
 - Authorization: Basic auth (user/password)
 ```
 
-2. Fetch page ranges : POST
+2. Fetch page ranges : GET
 ```
 - Request body: 
   - {
