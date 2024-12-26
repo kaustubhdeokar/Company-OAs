@@ -80,7 +80,7 @@ def events_on_page(page_no: str) -> List[str]:
                 'image_url': image_url
             })
             
-            print(f'Title: {name}, \nPrice: {price}, \nImage Path: {image_url}\n\n')
+            #print(f'Title: {name}, \nPrice: {price}, \nImage Path: {image_url}\n\n')
 
             if storage_type == 'local':
                 download_image(image_url, image_name, folder)
@@ -90,7 +90,7 @@ def events_on_page(page_no: str) -> List[str]:
     return events
     
 @app.get("/events/page/{page_no}")
-def get_events(page_no: str):
+def get_events(page_no: str, user: dict = Depends(get_current_user)):
     events = events_on_page(page_no)
     
     if storage_type == 'local':
@@ -102,10 +102,13 @@ def get_events(page_no: str):
 
 
 @app.get("/events/range")
-def get_events(page_range: PageRange):
+def get_events(page_range: PageRange, user: dict = Depends(get_current_user)):
     events = fetch_events_for_range(page_range)
+    if storage_type == 'local':
+        storage_strategy = LocalStorageStrategy()
+    else:
+        storage_strategy = DBStorageStrategy()
     return {"events": events}
-
 
 def fetch_events_for_range(page_range):
     all_events = []
@@ -113,19 +116,6 @@ def fetch_events_for_range(page_range):
         events = events_on_page(str(page_no))
         all_events.append(events)
     return events
-
-
-@app.post("/events/range/save")
-# def save_events(page_range: PageRange, user: dict = Depends(get_current_user)):
-def save_events(page_range: PageRange):
-    all_events = fetch_events_for_range(page_range)
-    if storage_type == 'local':
-        storage_strategy = LocalStorageStrategy()
-    else:
-        storage_strategy = DBStorageStrategy()
-    storage_strategy.save(all_events)
-    return {"message": "Events saved successfully"}
-
 
 @app.get("/scrape_count")
 def get_scrape_count(user: dict = Depends(get_current_user)):
