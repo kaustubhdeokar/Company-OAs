@@ -3,6 +3,7 @@ import bs4 as _bs4
 from typing import List
 import os
 import configparser
+from dotenv import load_dotenv
 
 from models.request_dtos import PageRange
 from storage.local import LocalStorageStrategy
@@ -14,6 +15,7 @@ from fastapi import FastAPI, Depends
 from auth import get_current_user
 import redis 
 
+load_dotenv()
 app = FastAPI()
 config = configparser.ConfigParser()
 config.read('config.properties')
@@ -33,8 +35,8 @@ def get_page(url: str) -> _bs4.BeautifulSoup:
         print('Cache hit!!!')
         soup = _bs4.BeautifulSoup(cached_page, "html.parser")
         return soup
-
-    payload = { 'api_key': 'bd5d5bbb6d360a4f10573f11c709c076', 'url': url }
+    api_key = os.getenv("API_KEY")
+    payload = { 'api_key': api_key, 'url': url }
     response = _requests.get('https://api.scraperapi.com/', params=payload)
     #response = _requests.get(url)
     if response.status_code == 200:
@@ -47,7 +49,8 @@ def get_page(url: str) -> _bs4.BeautifulSoup:
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(3))
 def download_image(image_url: str, image_name: str, folder: str):
-    payload = { 'api_key': 'bd5d5bbb6d360a4f10573f11c709c076', 'url': image_url }
+    api_key = os.getenv("API_KEY")
+    payload = { 'api_key': api_key, 'url': image_url }
     response = _requests.get('https://api.scraperapi.com/', params=payload)
     
     if response.status_code == 200:

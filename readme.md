@@ -1,8 +1,8 @@
 ## Web scraping tool
-- Built using python fastapi and beautifulsoup4.
-- Configurable storage support
-  - local or configurable db string.
-- Response caching support using redis.
+- Built using python Fast api and beautifulsoup4.
+- Configurable storage support / local or configurable db string.
+- Response caching support using Redis.
+- Proxy used (scrapper-api) to fetch results.
 - Notifying scraping status with console or api
 - Using inbuilt simple fast api authentication.
 
@@ -10,7 +10,6 @@
 ##### All api calls in api-call.json can directly be imported into Postman.
 1. Fetch page: GET
 ```
-
 - http://127.0.0.1:8000/events/page/<page-no>
 - Authorization: Basic auth (user/password)
 ```
@@ -47,4 +46,3 @@
 ```sh
 pip install -r requirements.txt
 ```
-

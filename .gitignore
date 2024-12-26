@@ -1,11 +1,14 @@
 # Virtual environment
 venv/
 .venv/
+new_env/
+.new_env/
+
 ENV/
 env/
 env.bak/
 venv.bak/
-
+.env
 # Libraries
 lib/
 lib64/
