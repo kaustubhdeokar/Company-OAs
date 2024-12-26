@@ -7,11 +7,16 @@
 - Using inbuilt simple fast api authentication.
 
 ### Endpoints
+##### All api calls in api-call.json can directly be imported into Postman.
 1. Fetch page: GET
+```
+
 - http://127.0.0.1:8000/events/page/<page-no>
 - Authorization: Basic auth (user/password)
+```
 
 2. Fetch page ranges : POST
+```
 - Request body: 
   - {
     "from_page":"2",
@@ -19,16 +24,24 @@
     }
 - http://127.0.0.1:8000/events/range
 - Authorization: Basic auth (user/password)
+```
 
 3. No. of items scraped: GET
+```
 - http://127.0.0.1:8000/scrape_count 
+- Authorization: Basic auth (user/password)
+```
 
 ### Info
 - Configurations are stored in src/config.properties file.
 - storage options - local/db.
-- caching support by redis - find in docker-compose.yml file.
-- results - query results & images are stored locally if local storagting is enabled. (images - src/res and results in src/ folder)
+- caching support by redis - find in <strong>docker-compose.yml</strong> file.
+- start redis by command 
+  - ``` docker-compose up```
 
+- results - query results & images are stored locally if local storagting is enabled.
+  - images - src/res 
+  - results in src/ folder
 
 ### Installation
 ```sh

@@ -1,6 +1,14 @@
 # Virtual environment
 venv/
 .venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Libraries
+lib/
+lib64/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

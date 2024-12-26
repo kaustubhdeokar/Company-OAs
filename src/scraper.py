@@ -34,7 +34,9 @@ def get_page(url: str) -> _bs4.BeautifulSoup:
         soup = _bs4.BeautifulSoup(cached_page, "html.parser")
         return soup
 
-    response = _requests.get(url)
+    payload = { 'api_key': 'bd5d5bbb6d360a4f10573f11c709c076', 'url': url }
+    response = _requests.get('https://api.scraperapi.com/', params=payload)
+    #response = _requests.get(url)
     if response.status_code == 200:
         soup = _bs4.BeautifulSoup(response.content, "html.parser")
         redis_client.setex(url, 3600, response.content)
@@ -45,7 +47,9 @@ def get_page(url: str) -> _bs4.BeautifulSoup:
 
 @retry(wait=wait_fixed(2), stop=stop_after_attempt(3))
 def download_image(image_url: str, image_name: str, folder: str):
-    response = _requests.get(image_url)
+    payload = { 'api_key': 'bd5d5bbb6d360a4f10573f11c709c076', 'url': image_url }
+    response = _requests.get('https://api.scraperapi.com/', params=payload)
+    
     if response.status_code == 200:
         os.makedirs(folder, exist_ok=True)
         file_path = os.path.join(os.getcwd(), folder, image_name)
@@ -104,11 +108,8 @@ def get_events(page_no: str, user: dict = Depends(get_current_user)):
 @app.get("/events/range")
 def get_events(page_range: PageRange, user: dict = Depends(get_current_user)):
     events = fetch_events_for_range(page_range)
-    if storage_type == 'local':
-        storage_strategy = LocalStorageStrategy()
-    else:
-        storage_strategy = DBStorageStrategy()
     return {"events": events}
+
 
 def fetch_events_for_range(page_range):
     all_events = []
@@ -116,6 +117,19 @@ def fetch_events_for_range(page_range):
         events = events_on_page(str(page_no))
         all_events.append(events)
     return events
+
+
+@app.post("/events/range/save")
+def save_events(page_range: PageRange, user: dict = Depends(get_current_user)):
+#def save_events(page_range: PageRange):
+    all_events = fetch_events_for_range(page_range)
+    if storage_type == 'local':
+        storage_strategy = LocalStorageStrategy()
+    else:
+        storage_strategy = DBStorageStrategy()
+    storage_strategy.save(all_events)
+    return {"message": "Events saved successfully"}
+
 
 @app.get("/scrape_count")
 def get_scrape_count(user: dict = Depends(get_current_user)):
